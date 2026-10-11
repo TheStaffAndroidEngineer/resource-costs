@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Explicit installed-artifact run retaining app files and pre/post package identity."""
+import os
 from pathlib import Path
 import argparse,datetime,hashlib,json,subprocess,urllib.request
 
 ROOT=Path(__file__).resolve().parents[1]
 p=argparse.ArgumentParser();p.add_argument('--build',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--serial',default='emulator-5554');a=p.parse_args()
 build=a.build.resolve();out=a.out.resolve();out.mkdir(parents=True,exist_ok=False)
-adb=[str(Path.home()/'Library/Android/sdk/platform-tools/adb'),'-s',a.serial]
+adb=[str(Path(os.environ.get('ANDROID_HOME', str(Path.home() / 'Library/Android/sdk'))) / 'platform-tools/adb'),'-s',a.serial]
 sha=lambda path:hashlib.sha256(path.read_bytes()).hexdigest()
 app=build/'artifacts/app/build/outputs/apk/lean/debug/app-lean-debug.apk'
 test=build/'artifacts/app/build/outputs/apk/androidTest/lean/debug/app-lean-debug-androidTest.apk'
